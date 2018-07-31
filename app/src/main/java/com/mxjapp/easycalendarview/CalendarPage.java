@@ -15,7 +15,10 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 
+import com.mxjapp.easycalendarview.entity.CalendarHint;
+
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * user: Jason Ran
@@ -23,8 +26,8 @@ import java.util.Calendar;
  */
 public class CalendarPage extends View implements NestedScrollingChild{
     private int type=TYPE_MONTH;
-    private final static int TYPE_MONTH=0;
-    private final static int TYPE_WEEK=1;
+    public final static int TYPE_MONTH=0;
+    public final static int TYPE_WEEK=1;
     private Paint p;
     private Paint.FontMetricsInt fm;
     private float width,maxHeight;
@@ -34,6 +37,7 @@ public class CalendarPage extends View implements NestedScrollingChild{
     private int textDimColor=Color.parseColor("#999999");
     private int backgroundSelectedColor=Color.parseColor("#FFEEE1");
     private int textSelectedColor=Color.parseColor("#FF6B00");
+    private int hintColor=Color.parseColor("#FF6060");
     private int textSize=12;//dp
     private float itemWidth,itemHeight;
     private RectF selectedRectF;
@@ -42,7 +46,9 @@ public class CalendarPage extends View implements NestedScrollingChild{
     private Calendar selectedCalendar;
     private Calendar calendar;
     private int currentMonth; //月模式使用
-    private int currentLine;//周模式使用
+    private static final int GESTURE_ERROR=5;
+    List<CalendarHint> hints;
+
     public CalendarPage(Context context) {
         this(context,null);
     }
@@ -108,9 +114,13 @@ public class CalendarPage extends View implements NestedScrollingChild{
                     canvas.drawRoundRect(selectedRectF,20,20,p);//画选中背景
                     p.setColor(textSelectedColor);//修改选中字体颜色
                 }
-                String s=calendar.get(Calendar.DAY_OF_MONTH)+"";
+                String s=calendar.get(Calendar.DAY_OF_MONTH)+""; //画日期
                 canvas.drawText(s,(itemWidth-p.measureText(s))/2,(itemHeight+fm.bottom-fm.top)/2-fm.descent,p);
 
+                if(hints!=null&&hints.size()>j+i*7){
+                    p.setColor(hintColor);
+                    if(hints.get(j+i*7).getValue()>0) canvas.drawCircle(itemWidth-20,20,6,p);
+                }
 
                 canvas.translate(horizontalSpace + itemWidth, 0);
                 calendar.add(Calendar.DAY_OF_MONTH,1);
@@ -127,12 +137,9 @@ public class CalendarPage extends View implements NestedScrollingChild{
         width=getMeasuredWidth();
         itemWidth=(width-6*horizontalSpace)/7;
         itemHeight=(width-6*horizontalSpace)/7;
-//        itemHeight=(height-5*verticalSpace)/6;
         maxHeight=itemHeight*6+verticalSpace*5;
         float height=type==TYPE_MONTH? maxHeight:itemHeight;
         setMeasuredDimension((int)width,(int)height);
-        Log.i("sssssssssssssss","inward w:"+width);
-        Log.i("sssssssssssssss","inward h:"+maxHeight);
     }
 
     @Override
@@ -142,9 +149,10 @@ public class CalendarPage extends View implements NestedScrollingChild{
 
     private float preX=0;
     private float preY=0;
-    private final int ACT_SCROLL_X=1;
-    private final int ACT_SCROLL_Y=2;
-    private final int ACT_NONE=0;
+    public static final int ACT_SCROLL_X=1;
+    public static final int ACT_SCROLL_MONTH_TO_WEEK=2;
+    public static final int ACT_SCROLL_WEEK_TO_MONTH=3;
+    public static final int ACT_NONE=0;
     private int act=ACT_NONE;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -154,13 +162,17 @@ public class CalendarPage extends View implements NestedScrollingChild{
                 act=ACT_NONE;
                 preX=event.getX();
                 preY=event.getY();
+                if(onScrollYListener!=null) onScrollYListener.onPreScroll(this);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(act==ACT_NONE) {
-                    if (event.getY() - preY > 2 || event.getY() - preY < -2) act = ACT_SCROLL_Y;
-                    else if(event.getX()-preX>2||event.getX()-preX<-2) act=ACT_SCROLL_X;
+                    float distanceY=event.getY()-preY;
+                    float distanceX=event.getX()-preX;
+                    if (distanceY<-GESTURE_ERROR && type==TYPE_MONTH) act = ACT_SCROLL_MONTH_TO_WEEK;
+                    else if(distanceY>GESTURE_ERROR&&type==TYPE_WEEK) act=ACT_SCROLL_WEEK_TO_MONTH;
+                    else if(distanceX>GESTURE_ERROR||distanceX<-GESTURE_ERROR) act=ACT_SCROLL_X;
                 }
-                if(act==ACT_SCROLL_Y) moveY(event.getY()-preY);
+                if(act==ACT_SCROLL_WEEK_TO_MONTH||act==ACT_SCROLL_MONTH_TO_WEEK) moveY(event.getY()-preY);
                 break;
             case MotionEvent.ACTION_UP:
                 Log.i("sssssssssssss","ACTION_UP");
@@ -196,7 +208,7 @@ public class CalendarPage extends View implements NestedScrollingChild{
                     }
                     performClick();
                 }else{
-                    if(onScrollYListener!=null) onScrollYListener.onStop(this);
+                    if(onScrollYListener!=null) onScrollYListener.onStopScroll(this,act);
 //                    animationY();
                 }
 //                Log.i("sssssssssss","pre_x:"+preX);
@@ -208,26 +220,8 @@ public class CalendarPage extends View implements NestedScrollingChild{
         return true;
     }
     private void moveY(float y){
-//        if(y<0) {
-//            this.setTranslationY(y);
-//        ViewGroup.LayoutParams layoutParams=getLayoutParams();
-
-//            this.offsetTopAndBottom((int) y);
-            offsetY=offsetY+y;
-            if(onScrollYListener!=null) onScrollYListener.onScroll(this,y);
-//            setY(20+y);
-            Log.i("sssssssssssss","y:"+y);
-            Log.i("sssssssssssss","offset:"+offsetY);
-            Log.i("sssssssssssss","preY:"+preY);
-            Log.i("sssssssssssss","scrollY:"+getScrollY());
-//            getParent()
-//        }
-//        this.scrollTo(0,(int)y);
-
-
-//        long distance=selectedCalendar.getTimeInMillis()/24/3600-calendar.getTimeInMillis()/24/3000;
-
-//        Log.i("ssssssssssss","y:"+y);
+//            offsetY=offsetY+y;
+            if(onScrollYListener!=null) onScrollYListener.onScroll(this,y,act);
     }
 
     public void setOnScrollYListener(OnScrollYListener onScrollYListener) {
@@ -239,7 +233,8 @@ public class CalendarPage extends View implements NestedScrollingChild{
     }
 
     public void setSelectedCalendar(Calendar selectedCalendar) {
-        this.selectedCalendar = selectedCalendar;
+        this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
+        this.hints=null;
         initCalendarData();
         postInvalidate();
     }
@@ -258,18 +253,19 @@ public class CalendarPage extends View implements NestedScrollingChild{
         }
         postInvalidate();
     }
-    public int getMonth(){
-        return selectedCalendar.get(Calendar.MONTH)+1;
-    }
-    public int getDay(){
-        return selectedCalendar.get(Calendar.DAY_OF_MONTH);
+
+    public void setHints(List<CalendarHint> hints) {
+        this.hints = hints;
+        postInvalidate();
     }
     public int getLine(){
-        Log.i("sssssssssssss","selected:"+selectedCalendar.get(Calendar.MONTH)+" "+selectedCalendar.get(Calendar.DAY_OF_MONTH));
-        Log.i("sssssssssssss","calendar:"+calendar.get(Calendar.MONTH)+" "+calendar.get(Calendar.DAY_OF_MONTH));
-        long interval=(selectedCalendar.getTimeInMillis()-calendar.getTimeInMillis())/24/3600/1000;
-        return (int) interval/7;
-
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(selectedCalendar.getTimeInMillis());
+        int dayOfMonth=c.get(Calendar.DAY_OF_MONTH);
+        c.set(Calendar.DAY_OF_MONTH,1);
+        int firstDayWeek=c.get(Calendar.DAY_OF_WEEK);
+        int interval=dayOfMonth-1+firstDayWeek-1;
+        return interval/7;
     }
     public Calendar getSelectedCalendar(){
         return selectedCalendar;
@@ -283,16 +279,23 @@ public class CalendarPage extends View implements NestedScrollingChild{
                 selectedCalendar.add(Calendar.WEEK_OF_MONTH,add);
                 break;
         }
+        this.hints=null;
         initCalendarData();
         postInvalidate();
     }
 
-    public void switchToMonth(){
-
+    public void switchToMonth(Calendar selectedCalendar){
+        this.type=TYPE_MONTH;
+        this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
+        this.hints=null;
+        initCalendarData();
+        requestLayout();
+        postInvalidate();
     }
     public void switchToWeek(Calendar selectedCalendar){
         this.type=TYPE_WEEK;
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
+        this.hints=null;
         initCalendarData();
         requestLayout();
         postInvalidate();
@@ -320,7 +323,8 @@ public class CalendarPage extends View implements NestedScrollingChild{
         void onClickNext(Calendar calendar);
     }
     public interface OnScrollYListener{
-        void onScroll(View view, float y);
-        void onStop(View view);
+        void onPreScroll(CalendarPage view);
+        void onScroll(CalendarPage view, float y,int act);
+        void onStopScroll(CalendarPage view,int act);
     }
 }

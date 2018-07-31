@@ -6,6 +6,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.mxjapp.easycalendarview.adapter.ItemAdapter;
+import com.mxjapp.easycalendarview.entity.CalendarHint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,5 +23,11 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView=findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ItemAdapter());
+        EasyCalendarView calendarView=findViewById(R.id.calendar);
+        List<CalendarHint> hints=new ArrayList<>();
+        for(int i=0;i<42;i++){
+            hints.add(new CalendarHint("00",1));
+        }
+        calendarView.setHints(hints);
     }
 }
