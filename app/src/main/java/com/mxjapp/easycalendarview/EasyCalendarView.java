@@ -35,6 +35,7 @@ public class EasyCalendarView extends ViewPager{
     private float itemHeight,itemWidth;
     private float verticalSpace,horizontalSpace;
     private float initX,initY;
+    private boolean initedPosition=false;
     private boolean scrollable=false;
     private int pageScrollState = ViewPager.SCROLL_STATE_IDLE;
     private boolean slideX=true;
@@ -89,7 +90,7 @@ public class EasyCalendarView extends ViewPager{
             @Override
             public void onPreScroll(CalendarPage view) {
                 currentLine=view.getLine();
-                viewMaxScrollY=-(currentLine*(itemHeight+verticalSpace));
+                viewMaxScrollY=-(currentLine*(itemHeight+verticalSpace))+initY;
                 otherView=getOtherView();
             }
 
@@ -167,7 +168,7 @@ public class EasyCalendarView extends ViewPager{
             Log.i("sssssssssssssssss","other view yy"+y);
         } else{
             setY(viewMaxScrollY);
-            offsetY=viewMaxScrollY;
+            offsetY=viewMaxScrollY-initY;
 //            if(otherView!=null) {
 //                otherView.offsetTopAndBottom((int) y);
                 Log.i("sssssssssssssssss","other view y"+otherView.getY());
@@ -180,7 +181,7 @@ public class EasyCalendarView extends ViewPager{
         switchToMonth();
         float offset=(currentLine)*(itemHeight+verticalSpace);
         int time=(int)offset;
-        setY(-offset);
+        setY(-offset+initY);
         this.animate().translationYBy(offset).setDuration(time).withEndAction(new Runnable() {
             @Override
             public void run() {
@@ -192,14 +193,12 @@ public class EasyCalendarView extends ViewPager{
 
     private void shrinkView(){
         int line=6-currentLine;
-        Log.i("sssssssssssssssss","line :"+line);
         float distance=((line-1)*verticalSpace+(line)*itemHeight-viewHeight)-offsetY;
         int time=distance>0?(int)distance:-(int)distance;
         this.animate().translationYBy(distance).setDuration(time).withEndAction(new Runnable() {
             @Override
             public void run() {
                 if(currentLine<5) {
-//                    remainderHeight=(line-1)*verticalSpace+(line-1)*itemHeight;
                     shrinkOtherView();
                 }
                 else {
@@ -222,9 +221,8 @@ public class EasyCalendarView extends ViewPager{
                     offsetY=0;
                     slideX=true;
                     switchToWeek();
-                    Log.i("sssssssssssss","end y:"+getY());
-                    if(Build.VERSION.SDK_INT>=21)
-                    stopNestedScroll();
+//                    if(Build.VERSION.SDK_INT>=21)
+//                    stopNestedScroll();
                 }
             });
 
@@ -240,7 +238,7 @@ public class EasyCalendarView extends ViewPager{
         return null;
     }
     private void switchToWeek(){
-        setY(0);
+        setY(initY);
         CalendarPage page=calendarPages.get(curPosition%3);
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(page.getSelectedCalendar().getTimeInMillis());
@@ -277,14 +275,18 @@ public class EasyCalendarView extends ViewPager{
         itemWidth=calendarPages.get(curPosition%3).getItemWidth();
         horizontalSpace=calendarPages.get(curPosition%3).getHorizontalSpace();
         verticalSpace=calendarPages.get(curPosition%3).getVerticalSpace();
-        initX=getX();
-        initY=getY();
         setMeasuredDimension((int)viewWidth,(int) viewHeight);
-        Log.i("sssssssssssss","outward x:"+getX());
-        Log.i("sssssssssssss","outward y:"+getY());
     }
 
-
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if(!initedPosition) {
+            initX = getX();
+            initY = getY();
+            initedPosition=true;
+        }
+    }
 
     public float getViewWidth() {
         return viewWidth;

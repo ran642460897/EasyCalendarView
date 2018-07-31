@@ -1,4 +1,4 @@
-package com.mxjapp.easycalendarview;
+package com.mxjapp.easycalendarview.util;
 
 import java.util.Calendar;
 

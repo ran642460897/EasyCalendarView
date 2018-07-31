@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mxjapp.easycalendarview.EasyCalendarView;
-import com.mxjapp.easycalendarview.UnitsUtil;
+import com.mxjapp.easycalendarview.util.UnitsUtil;
 
 
 /**

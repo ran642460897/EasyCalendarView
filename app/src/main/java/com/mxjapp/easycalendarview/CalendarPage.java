@@ -11,11 +11,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 
 
 import com.mxjapp.easycalendarview.entity.CalendarHint;
+import com.mxjapp.easycalendarview.util.CalendarUtil;
+import com.mxjapp.easycalendarview.util.UnitsUtil;
 
 import java.util.Calendar;
 import java.util.List;

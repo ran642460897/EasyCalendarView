@@ -1,10 +1,12 @@
-package com.mxjapp.easycalendarview;
+package com.mxjapp.easycalendarview.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.mxjapp.easycalendarview.EasyCalendarView;
+import com.mxjapp.easycalendarview.R;
 import com.mxjapp.easycalendarview.adapter.ItemAdapter;
 import com.mxjapp.easycalendarview.entity.CalendarHint;
 
