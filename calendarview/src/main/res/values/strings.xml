@@ -1,0 +1,3 @@
+<resources>
+    <string name="behavior_recycler_view">com.mxjapp.calendarview.behavior.RecyclerViewBehavior</string>
+</resources>

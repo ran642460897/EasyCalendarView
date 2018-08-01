@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:text="6546464"/>
     </android.support.design.widget.AppBarLayout>
-    <com.mxjapp.library.EasyCalendarView
+    <com.mxjapp.calendarview.EasyCalendarView
         android:id="@+id/calendar"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
