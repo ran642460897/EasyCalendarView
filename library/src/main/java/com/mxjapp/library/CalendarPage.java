@@ -1,4 +1,4 @@
-package com.mxjapp.easycalendarview;
+package com.mxjapp.library;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,9 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-import com.mxjapp.easycalendarview.entity.CalendarHint;
-import com.mxjapp.easycalendarview.util.CalendarUtil;
-import com.mxjapp.easycalendarview.util.UnitsUtil;
+import com.mxjapp.library.entity.CalendarHint;
 
 import java.util.Calendar;
 import java.util.List;
@@ -32,7 +30,6 @@ public class CalendarPage extends View implements NestedScrollingChild{
     private Paint.FontMetricsInt fm;
     private float width,maxHeight;
     private float horizontalSpace,verticalSpace;
-    private float offsetY=0;
     private int textColor=Color.parseColor("#333333");
     private int textDimColor=Color.parseColor("#999999");
     private int backgroundSelectedColor=Color.parseColor("#FFEEE1");
@@ -64,10 +61,10 @@ public class CalendarPage extends View implements NestedScrollingChild{
     }
 
     private void initViewData(){
-        horizontalSpace= UnitsUtil.dip2px(getContext(),6);
-        verticalSpace= UnitsUtil.dip2px(getContext(),6);
+        horizontalSpace= dip2px(getContext(),6);
+        verticalSpace= dip2px(getContext(),6);
         p=new Paint();
-        p.setTextSize(UnitsUtil.dip2px(getContext(),textSize));
+        p.setTextSize(dip2px(getContext(),textSize));
         p.setAntiAlias(true);
         fm=p.getFontMetricsInt();
         selectedRectF=new RectF(0,0,0,0);
@@ -273,7 +270,8 @@ public class CalendarPage extends View implements NestedScrollingChild{
     public void add(int add){
         switch (type){
             case TYPE_MONTH:
-                CalendarUtil.addMonth(this.selectedCalendar,add);
+                selectedCalendar.add(Calendar.MONTH,add);
+//                CalendarUtil.addMonth(this.selectedCalendar,add);
                 break;
             case TYPE_WEEK:
                 selectedCalendar.add(Calendar.WEEK_OF_MONTH,add);
@@ -300,6 +298,10 @@ public class CalendarPage extends View implements NestedScrollingChild{
         requestLayout();
         postInvalidate();
     }
+    private int dip2px(Context context, float dpValue){
+        float scale=context.getResources().getDisplayMetrics().density;
+        return (int)(dpValue*scale+0.5f);
+    }
 
     public float getItemHeight() {
         return itemHeight;
@@ -324,7 +326,7 @@ public class CalendarPage extends View implements NestedScrollingChild{
     }
     public interface OnScrollYListener{
         void onPreScroll(CalendarPage view);
-        void onScroll(CalendarPage view, float y,int act);
-        void onStopScroll(CalendarPage view,int act);
+        void onScroll(CalendarPage view, float y, int act);
+        void onStopScroll(CalendarPage view, int act);
     }
 }

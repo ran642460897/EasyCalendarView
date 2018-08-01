@@ -1,4 +1,4 @@
-package com.mxjapp.easycalendarview.entity;
+package com.mxjapp.library.entity;
 
 /**
  * user: Jason Ran

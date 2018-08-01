@@ -1,16 +1,14 @@
-package com.mxjapp.easycalendarview.adapter;
+package com.mxjapp.library.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import com.mxjapp.easycalendarview.CalendarPage;
+import com.mxjapp.library.CalendarPage;
 
 import java.util.List;
+
 
 /**
  * user: Jason Ran
@@ -36,7 +34,6 @@ public class CalendarViewPageAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-//        Log.i("sssssssssssssss","instant item");
         try {
             container.addView(views.get(position % 3));
         }catch (Exception e){
@@ -47,7 +44,5 @@ public class CalendarViewPageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-//        Log.i("ssssssssssssss","destroy item");
-//        container.removeView(views.get(position%3));
     }
 }

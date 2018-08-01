@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.mxjapp.easycalendarview.EasyCalendarView;
 import com.mxjapp.easycalendarview.R;
 import com.mxjapp.easycalendarview.adapter.ItemAdapter;
-import com.mxjapp.easycalendarview.entity.CalendarHint;
+import com.mxjapp.library.EasyCalendarView;
+import com.mxjapp.library.entity.CalendarHint;
 
 import java.util.ArrayList;
 import java.util.List;

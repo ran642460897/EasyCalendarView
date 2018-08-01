@@ -1,8 +1,6 @@
-package com.mxjapp.easycalendarview;
+package com.mxjapp.library;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -14,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import com.mxjapp.easycalendarview.adapter.CalendarViewPageAdapter;
-import com.mxjapp.easycalendarview.entity.CalendarHint;
+import com.mxjapp.library.adapter.CalendarViewPageAdapter;
+import com.mxjapp.library.entity.CalendarHint;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,9 +33,8 @@ public class EasyCalendarView extends ViewPager{
     private float itemHeight,itemWidth;
     private float verticalSpace,horizontalSpace;
     private float initX,initY;
-    private boolean initedPosition=false;
+    private boolean initPosition=false;
     private boolean scrollable=false;
-    private int pageScrollState = ViewPager.SCROLL_STATE_IDLE;
     private boolean slideX=true;
     private float viewMaxScrollY=0;
     private int currentLine=0;
@@ -53,7 +50,6 @@ public class EasyCalendarView extends ViewPager{
     private void initView(){
 
 
-//        viewPager=new ViewPager(getContext());
         calendarPages=new ArrayList<>();
 
         CalendarPage calendarPage1=new CalendarPage(getContext());
@@ -281,10 +277,10 @@ public class EasyCalendarView extends ViewPager{
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if(!initedPosition) {
+        if(!initPosition) {
             initX = getX();
             initY = getY();
-            initedPosition=true;
+            initPosition=true;
         }
     }
 
@@ -304,11 +300,6 @@ public class EasyCalendarView extends ViewPager{
     public void setHints(List<CalendarHint> hints){
         calendarPages.get(curPosition%3).setHints(hints);
     }
-
-    public int getPageScrollState() {
-        return pageScrollState;
-    }
-
     public float getItemHeight() {
         return itemHeight;
     }
