@@ -31,6 +31,7 @@ public class EasyCalendarView extends ViewPager{
     private float offsetY=0;
     private float viewWidth,viewHeight;
     private float itemHeight,itemWidth;
+    private float maxHeight,minHeight;
     private float verticalSpace,horizontalSpace;
     private float initX,initY;
     private boolean initPosition=false;
@@ -242,7 +243,7 @@ public class EasyCalendarView extends ViewPager{
         calendar.add(Calendar.DAY_OF_MONTH,14);//更新后一个页面
         calendarPages.get((curPosition+1)%3).switchToWeek(calendar);
     }
-    private void switchToMonth(){
+    public void switchToMonth(){
         CalendarPage page=calendarPages.get(curPosition%3);
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(page.getSelectedCalendar().getTimeInMillis());
@@ -267,6 +268,8 @@ public class EasyCalendarView extends ViewPager{
         itemWidth=calendarPages.get(curPosition%3).getItemWidth();
         horizontalSpace=calendarPages.get(curPosition%3).getHorizontalSpace();
         verticalSpace=calendarPages.get(curPosition%3).getVerticalSpace();
+        minHeight=itemHeight;
+        maxHeight=itemHeight*6+verticalSpace*5;
         setMeasuredDimension((int)viewWidth,(int) viewHeight);
     }
 
@@ -316,6 +319,18 @@ public class EasyCalendarView extends ViewPager{
 
     public float getItemWidth() {
         return itemWidth;
+    }
+
+    public float getInitY() {
+        return initY;
+    }
+
+    public float getMaxHeight() {
+        return maxHeight;
+    }
+
+    public float getMinHeight() {
+        return minHeight;
     }
 
     public void setOnDateChangedListener(OnDateChangedListener onDateChangedListener) {

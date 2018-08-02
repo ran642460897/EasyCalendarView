@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
         initView();
     }
     private void initView(){
-//        RecyclerView recyclerView=findViewById(R.id.recycler);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(new ItemAdapter());
+        RecyclerView recyclerView=findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new ItemAdapter());
         calendarView=findViewById(R.id.calendar);
         calendarView.setInitType(CalendarPage.TYPE_WEEK);
         calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {
@@ -43,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
         map.put("2018-08-02",1);
         map.put("2018-08-03",2);
         calendarView.addMarks(map);
-        findViewById(R.id.test_set_date).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar calendar=Calendar.getInstance();
-                calendar.add(Calendar.MONTH,6);
-                calendarView.setDate(calendar);
-            }
-        });
+//        findViewById(R.id.test_set_date).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Calendar calendar=Calendar.getInstance();
+//                calendar.add(Calendar.MONTH,6);
+//                calendarView.setDate(calendar);
+//            }
+//        });
     }
 }
