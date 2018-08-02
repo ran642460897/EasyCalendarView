@@ -4,14 +4,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
+import com.mxjapp.calendarview.CalendarPage;
 import com.mxjapp.calendarview.EasyCalendarView;
 import com.mxjapp.calendarview.entity.CalendarHint;
 import com.mxjapp.easycalendarview.R;
 import com.mxjapp.easycalendarview.adapter.ItemAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,10 +31,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ItemAdapter());
         EasyCalendarView calendarView=findViewById(R.id.calendar);
-        List<CalendarHint> hints=new ArrayList<>();
-        for(int i=0;i<42;i++){
-            hints.add(new CalendarHint("00",1));
-        }
-        calendarView.setHints(hints);
+        calendarView.setInitType(CalendarPage.TYPE_WEEK);
+        calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(Calendar calendar, int mark) {
+                Log.i("ssssssssssssssss","date change,mark:"+mark);
+            }
+        });
+        Map<String,Integer> map=new HashMap<>();
+        map.put("2018-08-02",1);
+        map.put("2018-08-03",2);
+        calendarView.addMarks(map);
     }
 }

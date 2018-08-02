@@ -17,6 +17,7 @@ import com.mxjapp.calendarview.entity.CalendarHint;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * user: Jason Ran
@@ -33,8 +34,8 @@ public class EasyCalendarView extends ViewPager{
     private float verticalSpace,horizontalSpace;
     private float initX,initY;
     private boolean initPosition=false;
-    private boolean scrollable=false;
-    private boolean slideX=true;
+    private boolean scrollableY=true;
+    private boolean scrollableX=true;
     private float viewMaxScrollY=0;
     private int currentLine=0;
     private View otherView;
@@ -61,24 +62,22 @@ public class EasyCalendarView extends ViewPager{
 
         CalendarPage.OnItemClickListener itemClickListener=new CalendarPage.OnItemClickListener() {
             @Override
-            public void onClickCurrent(Calendar calendar) {
+            public void onClickCurrent(Calendar calendar,int mark) {
                 calendarPages.get((curPosition-1)%3).setSelected(calendar);
                 calendarPages.get((curPosition+1)%3).setSelected(calendar);
-                if(onDateChangedListener!=null) onDateChangedListener.onDateChanged(calendar);
+                if(onDateChangedListener!=null) onDateChangedListener.onDateChanged(calendar,mark);
             }
 
             @Override
-            public void onClickPrevious(Calendar calendar) {
+            public void onClickPrevious(Calendar calendar,int mark) {
                 calendarPages.get((curPosition-1)%3).setSelected(calendar);
                 setCurrentItem(curPosition-1,true);
-                if(onDateChangedListener!=null) onDateChangedListener.onDateChanged(calendar);
             }
 
             @Override
-            public void onClickNext(Calendar calendar) {
+            public void onClickNext(Calendar calendar,int mark) {
                 calendarPages.get((curPosition+1)%3).setSelected(calendar);
                 setCurrentItem(curPosition+1,true);
-                if(onDateChangedListener!=null) onDateChangedListener.onDateChanged(calendar);
             }
         };
         CalendarPage.OnScrollYListener onScrollYListener=new CalendarPage.OnScrollYListener() {
@@ -97,14 +96,15 @@ public class EasyCalendarView extends ViewPager{
                     }
                 }else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH){
                     if(getY()+y>5){
-                        slideX=false;
+                        scrollableX=false;
                     }
                 }
             }
 
             @Override
             public void onStopScroll(CalendarPage view,int act) {
-                if(!slideX) {
+                if(!scrollableX) {
+                    scrollableY=false;
                     if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK)
                         shrinkView();
                     else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH)
@@ -134,15 +134,17 @@ public class EasyCalendarView extends ViewPager{
             @Override
             public void onPageSelected(int position) {
                 if(curPosition==0) return;
-//
-                if(position-curPosition>0) calendarPages.get((position-2)%3).add(3);
-                else if(position-curPosition<0) calendarPages.get((position+2)%3).add(-3);
+                if(curPosition!=position) {
+                    if (position - curPosition > 0) calendarPages.get((position - 2) % 3).add(3);
+                    else if (position - curPosition < 0) calendarPages.get((position + 2) % 3).add(-3);
 
-                curPosition=position;
-                Calendar calendar=calendarPages.get(curPosition%3).getSelectedCalendar();
-                calendarPages.get((curPosition+1)%3).setSelected(calendar);
-                calendarPages.get((curPosition-1)%3).setSelected(calendar);
-                Log.i("ssssssssssssss",calendarPages.get(curPosition%3).getSelectedCalendar().get(Calendar.MONTH)+1+"月");
+                    curPosition = position;
+                    Calendar calendar = calendarPages.get(curPosition % 3).getSelectedCalendar();
+                    calendarPages.get((curPosition + 1) % 3).setSelected(calendar);
+                    calendarPages.get((curPosition - 1) % 3).setSelected(calendar);
+                    if(onDateChangedListener!=null) onDateChangedListener.onDateChanged(calendar,calendarPages.get(curPosition % 3).getSelectedMark());
+                    Log.i("ssssssssssssss", calendarPages.get(curPosition % 3).getSelectedCalendar().get(Calendar.MONTH) + 1 + "月");
+                }
             }
 
             @Override
@@ -155,19 +157,15 @@ public class EasyCalendarView extends ViewPager{
 
     }
     private void slideMonthToWeek(float y){
-        slideX = false;
+        scrollableX = false;
         if(getY()+y>viewMaxScrollY) {
             setY(getY() + y);
             offsetY = offsetY + y;
-            Log.i("sssssssssssssssss","other view y"+getY());
-            Log.i("sssssssssssssssss","other view yy"+y);
         } else{
             setY(viewMaxScrollY);
             offsetY=viewMaxScrollY-initY;
 //            if(otherView!=null) {
 //                otherView.offsetTopAndBottom((int) y);
-                Log.i("sssssssssssssssss","other view y"+otherView.getY());
-                Log.i("sssssssssssssssss","other view yy"+y);
 //            }
 //            offsetY=offsetY+y;
         }
@@ -180,8 +178,7 @@ public class EasyCalendarView extends ViewPager{
         this.animate().translationYBy(offset).setDuration(time).withEndAction(new Runnable() {
             @Override
             public void run() {
-                slideX=true;
-                offsetY=0;
+                endAnimation();
             }
         });
     }
@@ -197,24 +194,19 @@ public class EasyCalendarView extends ViewPager{
                     shrinkOtherView();
                 }
                 else {
-                    offsetY = 0;
-                    slideX = true;
+                    endAnimation();
                     switchToWeek();
                 }
-//                if(Build.VERSION.SDK_INT>=21)
-//                stopNestedScroll();
             }
         });
     }
     private void shrinkOtherView(){
-
             float height=(5-currentLine)*(verticalSpace+itemHeight);
             int time=(int) height;
             otherView.animate().translationYBy(-height).setDuration(time).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    offsetY=0;
-                    slideX=true;
+                    endAnimation();
                     switchToWeek();
 //                    if(Build.VERSION.SDK_INT>=21)
 //                    stopNestedScroll();
@@ -231,6 +223,11 @@ public class EasyCalendarView extends ViewPager{
             }
         }
         return null;
+    }
+    private void endAnimation(){
+        offsetY = 0;
+        scrollableX = true;
+        scrollableY=true;
     }
     private void switchToWeek(){
         setY(initY);
@@ -259,7 +256,7 @@ public class EasyCalendarView extends ViewPager{
     }
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return slideX&&super.onInterceptTouchEvent(ev);
+        return scrollableX&&scrollableY&&super.onInterceptTouchEvent(ev);
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -291,13 +288,14 @@ public class EasyCalendarView extends ViewPager{
         return viewHeight;
     }
 
-
-    public void setScrollable(boolean scrollable) {
-        this.scrollable = scrollable;
+    public void setInitType(int type){
+        if(type==CalendarPage.TYPE_WEEK) switchToWeek();
     }
 
-    public void setHints(List<CalendarHint> hints){
-        calendarPages.get(curPosition%3).setHints(hints);
+    public void addMarks(Map<String,Integer> map){
+        for(int i=0;i<calendarPages.size();i++){
+            calendarPages.get(i).addMarks(map);
+        }
     }
     public float getItemHeight() {
         return itemHeight;
@@ -312,6 +310,6 @@ public class EasyCalendarView extends ViewPager{
     }
 
     public interface OnDateChangedListener{
-        void onDateChanged(Calendar calendar);
+        void onDateChanged(Calendar calendar,int mark);
     }
 }
