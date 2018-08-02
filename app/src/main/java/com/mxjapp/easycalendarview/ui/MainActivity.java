@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.mxjapp.calendarview.CalendarPage;
 import com.mxjapp.calendarview.EasyCalendarView;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    private EasyCalendarView calendarView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
         initView();
     }
     private void initView(){
-        RecyclerView recyclerView=findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ItemAdapter());
-        EasyCalendarView calendarView=findViewById(R.id.calendar);
+//        RecyclerView recyclerView=findViewById(R.id.recycler);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(new ItemAdapter());
+        calendarView=findViewById(R.id.calendar);
         calendarView.setInitType(CalendarPage.TYPE_WEEK);
         calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {
             @Override
@@ -42,5 +43,13 @@ public class MainActivity extends AppCompatActivity {
         map.put("2018-08-02",1);
         map.put("2018-08-03",2);
         calendarView.addMarks(map);
+        findViewById(R.id.test_set_date).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar calendar=Calendar.getInstance();
+                calendar.add(Calendar.MONTH,6);
+                calendarView.setDate(calendar);
+            }
+        });
     }
 }

@@ -292,6 +292,19 @@ public class EasyCalendarView extends ViewPager{
         if(type==CalendarPage.TYPE_WEEK) switchToWeek();
     }
 
+    public void setDate(Calendar calendar){
+        for(int i=0;i<calendarPages.size();i++){
+            calendarPages.get(i).setSelectedCalendar(calendar);
+        }
+        calendarPages.get(curPosition%3).notifyChanged();
+        calendarPages.get((curPosition-1)%3).add(-1);
+        calendarPages.get((curPosition+1)%3).add(1);
+    }
+    public Calendar getDate(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(calendarPages.get(curPosition%3).getSelectedCalendar().getTimeInMillis());
+        return calendar;
+    }
     public void addMarks(Map<String,Integer> map){
         for(int i=0;i<calendarPages.size();i++){
             calendarPages.get(i).addMarks(map);

@@ -232,11 +232,6 @@ public class CalendarPage extends View implements NestedScrollingChild{
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void setSelectedCalendar(Calendar selectedCalendar) {
-        this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
-        initCalendarData();
-        postInvalidate();
-    }
     public void setSelected(Calendar c){
         switch (type){
             case TYPE_MONTH:
@@ -279,23 +274,26 @@ public class CalendarPage extends View implements NestedScrollingChild{
                 selectedCalendar.add(Calendar.WEEK_OF_MONTH,add);
                 break;
         }
+        notifyChanged();
+    }
+    public void notifyChanged(){
         initCalendarData();
         postInvalidate();
     }
-
+    public void setSelectedCalendar(Calendar selectedCalendar) {
+        this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
+    }
     public void switchToMonth(Calendar selectedCalendar){
         this.type=TYPE_MONTH;
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
-        postInvalidate();
     }
     public void switchToWeek(Calendar selectedCalendar){
         this.type=TYPE_WEEK;
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
-        postInvalidate();
     }
     private int dip2px(Context context, float dpValue){
         float scale=context.getResources().getDisplayMetrics().density;
