@@ -288,12 +288,14 @@ public class CalendarPage extends View implements NestedScrollingChild{
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
+        postInvalidate();
     }
     public void switchToWeek(Calendar selectedCalendar){
         this.type=TYPE_WEEK;
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
+        postInvalidate();
     }
     private int dip2px(Context context, float dpValue){
         float scale=context.getResources().getDisplayMetrics().density;
@@ -325,6 +327,10 @@ public class CalendarPage extends View implements NestedScrollingChild{
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public interface OnItemClickListener{

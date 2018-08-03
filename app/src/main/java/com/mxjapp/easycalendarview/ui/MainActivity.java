@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ItemAdapter());
         calendarView=findViewById(R.id.calendar);
-        calendarView.setInitType(CalendarPage.TYPE_WEEK);
+//        calendarView.setInitType(CalendarPage.TYPE_WEEK);
         calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {
             @Override
             public void onDateChanged(Calendar calendar, int mark) {

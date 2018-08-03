@@ -33,6 +33,7 @@ public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
 
     @Override
     public boolean onDependentViewChanged(@NonNull CoordinatorLayout parent, @NonNull View child, @NonNull View dependency) {
+        Log.i("ssssssssssssssss","onDependentViewChanged");
         EasyCalendarView view=(EasyCalendarView)dependency;
         child.setY(view.getY()+view.getViewHeight());
         return true;
