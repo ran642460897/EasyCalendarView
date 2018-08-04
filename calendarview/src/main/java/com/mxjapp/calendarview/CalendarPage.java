@@ -32,16 +32,17 @@ public class CalendarPage extends View implements NestedScrollingChild{
     public final static int TYPE_WEEK=1;
     private Paint p;
     private Paint.FontMetricsInt fm;
-    private float width,maxHeight;
-    private float horizontalSpace,verticalSpace;
+    private float viewWidth,viewHeight;
+    private float horizontalSpace;
     private int textColor=Color.parseColor("#333333");
     private int textDimColor=Color.parseColor("#999999");
     private int backgroundSelectedColor=Color.parseColor("#FFEEE1");
     private int textSelectedColor=Color.parseColor("#FF6B00");
     private int hintColor=Color.parseColor("#FF6060");
     private int textSize=12;//dp
-    private float itemWidth,itemHeight;
+    private float itemWidth;
     private RectF selectedRectF;
+    private int itemHeight,maxHeight,verticalSpace;
     private OnItemClickListener onItemClickListener;
     private OnScrollYListener onScrollYListener;
     private Calendar selectedCalendar;
@@ -134,12 +135,12 @@ public class CalendarPage extends View implements NestedScrollingChild{
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width=getMeasuredWidth();
-        itemWidth=(width-6*horizontalSpace)/7;
-        itemHeight=(width-6*horizontalSpace)/7;
+        viewWidth=getMeasuredWidth();
+        itemWidth=(viewWidth-6*horizontalSpace)/7;
+        itemHeight=(int)itemWidth;
         maxHeight=itemHeight*6+verticalSpace*5;
-        float height=type==TYPE_MONTH? maxHeight:itemHeight;
-        setMeasuredDimension((int)width,(int)height);
+        viewHeight=type==TYPE_MONTH? maxHeight:itemHeight;
+        setMeasuredDimension((int)viewWidth,(int)viewHeight);
     }
 
     @Override
@@ -288,14 +289,14 @@ public class CalendarPage extends View implements NestedScrollingChild{
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
-        postInvalidate();
+//        postInvalidate();
     }
     public void switchToWeek(Calendar selectedCalendar){
         this.type=TYPE_WEEK;
         this.selectedCalendar.setTimeInMillis(selectedCalendar.getTimeInMillis());
         initCalendarData();
         requestLayout();
-        postInvalidate();
+//        postInvalidate();
     }
     private int dip2px(Context context, float dpValue){
         float scale=context.getResources().getDisplayMetrics().density;
@@ -309,7 +310,7 @@ public class CalendarPage extends View implements NestedScrollingChild{
         return getMarkNumber(selectedCalendar);
     }
 
-    public float getItemHeight() {
+    public int getItemHeight() {
         return itemHeight;
     }
 
@@ -317,11 +318,15 @@ public class CalendarPage extends View implements NestedScrollingChild{
         return itemWidth;
     }
 
+    public float getViewHeight() {
+        return viewHeight;
+    }
+
     public float getHorizontalSpace() {
         return horizontalSpace;
     }
 
-    public float getVerticalSpace() {
+    public int getVerticalSpace() {
         return verticalSpace;
     }
 
@@ -332,6 +337,8 @@ public class CalendarPage extends View implements NestedScrollingChild{
     public int getType() {
         return type;
     }
+
+
 
     public interface OnItemClickListener{
         void onClickCurrent(Calendar calendar,int mark);

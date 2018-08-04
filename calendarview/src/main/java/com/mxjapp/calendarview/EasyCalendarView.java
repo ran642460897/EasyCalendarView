@@ -1,6 +1,7 @@
 package com.mxjapp.calendarview;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 
 import com.mxjapp.calendarview.adapter.CalendarViewPageAdapter;
@@ -29,18 +31,18 @@ public class EasyCalendarView extends ViewPager{
     private List<CalendarPage> calendarPages;
     private int curPosition;
     private float offsetY=0;
-    private float viewWidth,viewHeight;
-    private float itemHeight,itemWidth;
-    private float upperHeight,underHeight;
-    private float maxHeight,minHeight;
-    private float verticalSpace,horizontalSpace;
+    private float viewWidth;
+    private float itemWidth;
+    private float horizontalSpace;
     private float initX,initY;
     private boolean initPosition=false;
     private boolean scrollableY=true;
     private boolean scrollableX=true;
     private float viewMaxScrollY=0;
     private int currentLine=0;
+    private int upperHeight,underHeight,itemHeight,maxHeight,minHeight,verticalSpace,viewHeight;
     private View otherView;
+    private boolean frozen=false;
     public EasyCalendarView(@NonNull Context context) {
         this(context,null);
     }
@@ -50,8 +52,6 @@ public class EasyCalendarView extends ViewPager{
         initView();
     }
     private void initView(){
-
-
         calendarPages=new ArrayList<>();
 
         CalendarPage calendarPage1=new CalendarPage(getContext());
@@ -86,33 +86,33 @@ public class EasyCalendarView extends ViewPager{
         CalendarPage.OnScrollYListener onScrollYListener=new CalendarPage.OnScrollYListener() {
             @Override
             public void onPreScroll(CalendarPage view) {
-//                currentLine=view.getLine();
-//                viewMaxScrollY=-(currentLine*(itemHeight+verticalSpace))+initY;
-//                otherView=getOtherView();
+                currentLine=view.getLine();
+                viewMaxScrollY=-(currentLine*(itemHeight+verticalSpace))+initY;
+                otherView=getOtherView();
             }
 
             @Override
             public void onScroll(CalendarPage v,float y,int act) {
-//                if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK) {
-//                    if (getY() + y < 0) {
-//                        slideMonthToWeek(y);
-//                    }
-//                }else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH){
-//                    if(getY()+y>5){
-//                        scrollableX=false;
-//                    }
-//                }
+                if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK) {
+                    if (getY() + y < 0) {
+                        slideMonthToWeek(y);
+                    }
+                }else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH){
+                    if(getY()+y>5){
+                        scrollableX=false;
+                    }
+                }
             }
 
             @Override
             public void onStopScroll(CalendarPage view,int act) {
-//                if(!scrollableX) {
-//                    scrollableY=false;
-//                    if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK)
-//                        shrinkView();
-//                    else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH)
-//                        expandView();
-//                }
+                if(!scrollableX) {
+                    scrollableY=false;
+                    if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK)
+                        shrinkView();
+                    else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH)
+                        expandView();
+                }
             }
         };
 
@@ -156,6 +156,12 @@ public class EasyCalendarView extends ViewPager{
 
             }
         });
+        getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+            @Override
+            public void onDraw() {
+                frozen=false;
+            }
+        });
         setCurrentItem(1000,false);
         curPosition=getCurrentItem();
 
@@ -168,23 +174,17 @@ public class EasyCalendarView extends ViewPager{
     private void slideMonthToWeek(float y){
         scrollableX = false;
         if(getY()+y>viewMaxScrollY) {
-            setY(getY() + y);
+            setTranslationY(getTranslationY() + y);
             offsetY = offsetY + y;
         } else{
-            setY(viewMaxScrollY);
+            setTranslationY(viewMaxScrollY);
             offsetY=viewMaxScrollY-initY;
-//            if(otherView!=null) {
-//                otherView.offsetTopAndBottom((int) y);
-//            }
-//            offsetY=offsetY+y;
         }
     }
     private void expandView(){
         switchToMonth();
-        float offset=(currentLine)*(itemHeight+verticalSpace);
-        int time=(int)offset;
-        setY(-offset+initY);
-        this.animate().translationYBy(offset).setDuration(time).withEndAction(new Runnable() {
+        int time=upperHeight;
+        this.animate().translationYBy(upperHeight).setDuration(time).withEndAction(new Runnable() {
             @Override
             public void run() {
                 endAnimation();
@@ -238,8 +238,8 @@ public class EasyCalendarView extends ViewPager{
         scrollableX = true;
         scrollableY=true;
     }
-    private void switchToWeek(){
-        setY(initY);
+    public void switchToWeek(){
+        setTranslationY(initY);
         CalendarPage page=calendarPages.get(curPosition%3);
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(page.getSelectedCalendar().getTimeInMillis());
@@ -251,7 +251,26 @@ public class EasyCalendarView extends ViewPager{
         calendar.add(Calendar.DAY_OF_MONTH,14);//更新后一个页面
         calendarPages.get((curPosition+1)%3).switchToWeek(calendar);
     }
+    public void switchCurrentPageToMonth(){
+        frozen=true;
+        setTranslationY(initY-upperHeight);
+        CalendarPage page=calendarPages.get(curPosition%3);
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(page.getSelectedCalendar().getTimeInMillis());
+        page.switchToMonth(calendar);
+    }
+    public void switchOtherPagesToMonth(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(calendarPages.get(curPosition%3).getSelectedCalendar().getTimeInMillis());
+
+        calendar.add(Calendar.MONTH,-1);
+        calendarPages.get((curPosition-1)%3).switchToMonth(calendar);
+
+        calendar.add(Calendar.MONTH,2);
+        calendarPages.get((curPosition+1)%3).switchToMonth(calendar);
+    }
     public void switchToMonth(){
+        setTranslationY(initY-upperHeight);
         CalendarPage page=calendarPages.get(curPosition%3);
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(page.getSelectedCalendar().getTimeInMillis());
@@ -279,7 +298,7 @@ public class EasyCalendarView extends ViewPager{
         minHeight=itemHeight;
         maxHeight=itemHeight*6+verticalSpace*5;
         calculateLine();
-        setMeasuredDimension((int)viewWidth,(int) viewHeight);
+        setMeasuredDimension((int)viewWidth,viewHeight);
     }
 
     @Override
@@ -291,7 +310,6 @@ public class EasyCalendarView extends ViewPager{
             initPosition=true;
         }
     }
-
     public float getViewWidth() {
         return viewWidth;
     }
@@ -322,7 +340,7 @@ public class EasyCalendarView extends ViewPager{
             calendarPages.get(i).addMarks(map);
         }
     }
-    public float getItemHeight() {
+    public int getItemHeight() {
         return itemHeight;
     }
 
@@ -334,11 +352,11 @@ public class EasyCalendarView extends ViewPager{
         return initY;
     }
 
-    public float getMaxHeight() {
+    public int getMaxHeight() {
         return maxHeight;
     }
 
-    public float getMinHeight() {
+    public int getMinHeight() {
         return minHeight;
     }
 
@@ -350,6 +368,8 @@ public class EasyCalendarView extends ViewPager{
         return currentLine;
     }
 
+
+
     public float getUpperHeight() {
         return upperHeight;
     }
@@ -359,6 +379,10 @@ public class EasyCalendarView extends ViewPager{
     }
     public int getType(){
         return calendarPages.get(curPosition%3).getType();
+    }
+
+    public boolean isFrozen() {
+        return frozen;
     }
 
     public void setOnDateChangedListener(OnDateChangedListener onDateChangedListener) {

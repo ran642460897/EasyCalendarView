@@ -1,5 +1,6 @@
 package com.mxjapp.easycalendarview.ui;
 
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         initView();
     }
     private void initView(){
-        RecyclerView recyclerView=findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ItemAdapter());
+//        RecyclerView recyclerView=findViewById(R.id.recycler);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(new ItemAdapter());
         calendarView=findViewById(R.id.calendar);
 //        calendarView.setInitType(CalendarPage.TYPE_WEEK);
         calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {

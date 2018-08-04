@@ -1,3 +1,4 @@
 <resources>
-    <string name="behavior_recycler_view">com.mxjapp.calendarview.behavior.RecyclerViewBehavior</string>
+    <string name="behavior_target_view">com.mxjapp.calendarview.behavior.TargetViewBehavior</string>
+    <string name="behavior_calendar_view_with_scroll_view">com.mxjapp.calendarview.behavior.CalendarViewBehaviorWithScrollView</string>
 </resources>

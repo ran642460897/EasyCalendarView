@@ -14,8 +14,8 @@ import com.mxjapp.calendarview.EasyCalendarView;
  * user: Jason Ran
  * date: 2018/7/30.
  */
-public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
-    public RecyclerViewBehavior(Context context, AttributeSet attrs) {
+public class TargetViewBehavior extends CoordinatorLayout.Behavior<View> {
+    public TargetViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -35,7 +35,10 @@ public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
     public boolean onDependentViewChanged(@NonNull CoordinatorLayout parent, @NonNull View child, @NonNull View dependency) {
         Log.i("ssssssssssssssss","onDependentViewChanged");
         EasyCalendarView view=(EasyCalendarView)dependency;
-        child.setY(view.getY()+view.getViewHeight());
+        if(!view.isFrozen()) {
+            Log.i("ssssssssssssss","move");
+            child.setTranslationY(view.getY() + view.getViewHeight());
+        }
         return true;
     }
 }
