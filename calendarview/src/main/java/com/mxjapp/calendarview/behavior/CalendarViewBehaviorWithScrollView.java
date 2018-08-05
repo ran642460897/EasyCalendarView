@@ -21,19 +21,20 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
     }
 
 
+    @Override
+    public boolean onInterceptTouchEvent(CoordinatorLayout parent, EasyCalendarView child, MotionEvent ev) {
+        return helper!=null&&!helper.isScrollable();
+    }
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View directTargetTarget, @NonNull View target, int axes, int type) {
         if(helper==null) helper=child.getScrollHelper();
-        Log.i("ssssssssssss","scrollable:"+helper.isScrollable());
         if(axes == ViewCompat.SCROLL_AXIS_VERTICAL&&helper.isScrollable()&&target.getScrollY()==0){
             if(!helper.isPrepared()) {
-                Log.i("ssssssssssss","init:");
                 helper.init(child,target);
                 helper.setPrepared(true);
                 return false;
             }else{
-                Log.i("ssssssssssss","start start:");
                 helper.setPrepared(false);
                 return true;
             }
@@ -63,16 +64,13 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
     @Override
     public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, float velocityX, float velocityY) {
 //        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-        Log.i("sssssssssssssssssss","onPreNestedFling");
         boolean interceptFling=target.getScrollY()==0;
         if(!interceptFling) helper.setScrollable(false);
         return interceptFling;
-//        return true;
     }
 
     @Override
     public boolean onNestedFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, float velocityX, float velocityY, boolean consumed) {
-        Log.i("sssssssssssssssssss","onNestedFling");
         return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed);
     }
 }

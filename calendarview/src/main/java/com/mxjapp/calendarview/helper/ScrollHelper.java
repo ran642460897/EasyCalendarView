@@ -1,7 +1,6 @@
 package com.mxjapp.calendarview.helper;
 
 import android.support.v4.widget.NestedScrollView;
-import android.util.Log;
 import android.view.View;
 
 import com.mxjapp.calendarview.CalendarPage;
@@ -12,13 +11,13 @@ import com.mxjapp.calendarview.EasyCalendarView;
  * date: 2018/8/4.
  */
 public class ScrollHelper {
-    public static final int SCROLL_TYPE_NONE=0;
-    public static final int SCROLL_TYPE_TO_TOP=1;
-    public static final int SCROLL_TYPE_TO_BOTTOM=2;
+    private static final int SCROLL_TYPE_NONE=0;
+    private static final int SCROLL_TYPE_TO_TOP=1;
+    private static final int SCROLL_TYPE_TO_BOTTOM=2;
     private EasyCalendarView calendarView;
     private NestedScrollView targetView;
     private int finalCalendarDownY,finalTargetDownY,finalCalendarUpY,finalTargetUpY;
-    int initTargetHeight=0,initCalendarHeight=0;
+//    private int initTargetHeight=0,initCalendarHeight=0;
     private boolean prepared=false;
     private boolean scrollable=true;
     private int firstScrollType=SCROLL_TYPE_NONE;
@@ -38,8 +37,8 @@ public class ScrollHelper {
             finalTargetDownY = (int) (child.getInitY() + child.getMaxHeight());//下滑target最终位置
             finalCalendarUpY = (int) (child.getInitY() - child.getUpperHeight());//上滑calendar最终位置
             finalTargetUpY = (int) (child.getInitY() + child.getItemHeight());//上滑target最终位置
-            initCalendarHeight = (int) calendarView.getY();//calendar初始位置
-            initTargetHeight = (int) targetView.getY();//child初始位置
+//            initCalendarHeight = (int) calendarView.getY();//calendar初始位置
+//            initTargetHeight = (int) targetView.getY();//child初始位置
     }
     public boolean scroll(float dy){
         boolean consumed=false;
@@ -90,7 +89,7 @@ public class ScrollHelper {
         }
         else if (targetView.getScrollY()==0) {
             scrollable=false;//不可滑动
-            int calendarDistance=0,targetDistance=0;
+            int calendarDistance,targetDistance;
             switch (firstScrollType){
                 case SCROLL_TYPE_TO_TOP:
                     calendarDistance=finalCalendarDownY-(int) calendarView.getY();
@@ -110,7 +109,6 @@ public class ScrollHelper {
         }
     }
     private void translateToTop(){
-        Log.i("sssssssssssss","to top");
         if((int)calendarView.getY()>finalCalendarUpY){
             translateCalendar(finalCalendarUpY-calendarView.getY(),true);
         }else{
@@ -118,7 +116,6 @@ public class ScrollHelper {
         }
     }
     private void translateToBottom(){
-        Log.i("sssssssssssss","to bottom");
         int targetOffsetY=(int) (targetView.getY()-calendarView.getY()-calendarView.getUpperHeight()-calendarView.getItemHeight());
         int targetAllOffsetY=(int)calendarView.getUnderHeight();
         if(targetOffsetY<targetAllOffsetY){
@@ -164,8 +161,6 @@ public class ScrollHelper {
         calendarView.setScrollableX(true);
     }
     public boolean dispatchScroll(){
-        Log.i("ssssssssssssssssssssss","scroll view:"+targetView.getScrollY());
-        Log.i("ssssssssssssssssssssss","scroll type:"+firstScrollType);
         return targetView.getScrollY()==0&&(firstScrollType==SCROLL_TYPE_TO_TOP||firstScrollType==SCROLL_TYPE_TO_BOTTOM);
     }
 
