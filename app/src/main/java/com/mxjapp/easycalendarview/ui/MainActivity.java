@@ -1,23 +1,15 @@
 package com.mxjapp.easycalendarview.ui;
 
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 
-import com.mxjapp.calendarview.CalendarPage;
 import com.mxjapp.calendarview.EasyCalendarView;
-import com.mxjapp.calendarview.entity.CalendarHint;
+import com.mxjapp.calendarview.entity.StyleAttr;
 import com.mxjapp.easycalendarview.R;
-import com.mxjapp.easycalendarview.adapter.ItemAdapter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        recyclerView.setAdapter(new ItemAdapter());
         calendarView=findViewById(R.id.calendar);
+        StyleAttr attr=new StyleAttr().setHorizontalSpace(20);
+        calendarView.setStyleAttr(attr);
 //        calendarView.setInitType(CalendarPage.TYPE_WEEK);
         calendarView.setOnDateChangedListener(new EasyCalendarView.OnDateChangedListener() {
             @Override

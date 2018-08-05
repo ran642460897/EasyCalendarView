@@ -26,17 +26,14 @@ public class TargetViewBehavior extends CoordinatorLayout.Behavior<View> {
 
     @Override
     public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int type) {
-        Log.i("ssssssssssssssss","onStopNestedScroll");
         super.onStopNestedScroll(coordinatorLayout, child, target, type);
 
     }
 
     @Override
     public boolean onDependentViewChanged(@NonNull CoordinatorLayout parent, @NonNull View child, @NonNull View dependency) {
-        Log.i("ssssssssssssssss","onDependentViewChanged");
         EasyCalendarView view=(EasyCalendarView)dependency;
         if(!view.isFrozen()) {
-            Log.i("ssssssssssssss","move");
             child.setTranslationY(view.getY() + view.getViewHeight());
         }
         return true;
