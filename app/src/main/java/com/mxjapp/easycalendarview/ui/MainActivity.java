@@ -3,6 +3,8 @@ package com.mxjapp.easycalendarview.ui;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.mxjapp.calendarview.EasyCalendarView;
 import com.mxjapp.calendarview.entity.StyleAttr;
@@ -38,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         map.put("2018-08-02",1);
         map.put("2018-08-03",2);
         calendarView.addMarks(map);
+        findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"哈哈",Toast.LENGTH_SHORT).show();
+            }
+        });
 //        findViewById(R.id.test_set_date).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

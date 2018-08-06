@@ -9,10 +9,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.mxjapp.calendarview.CalendarPage;
 import com.mxjapp.calendarview.EasyCalendarView;
 import com.mxjapp.calendarview.helper.ScrollHelper;
+
+import org.w3c.dom.Text;
 
 public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavior<EasyCalendarView> {
     private ScrollHelper helper;
@@ -20,24 +23,33 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
         super(context, attrs);
     }
 
+    @Override
+    public boolean onTouchEvent(CoordinatorLayout parent, EasyCalendarView child, MotionEvent ev) {
+//        Log.i("sssssssssssssss","ssssssssssssss");
+        return super.onTouchEvent(parent, child, ev);
+    }
 
     @Override
     public boolean onInterceptTouchEvent(CoordinatorLayout parent, EasyCalendarView child, MotionEvent ev) {
-        return helper!=null&&!helper.isScrollable();
+//        return helper!=null&&!helper.isScrollable();
+        return false;
     }
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View directTargetTarget, @NonNull View target, int axes, int type) {
+//        Log.i("sssssssssssssss","onStartNestedScroll");
         if(helper==null) helper=child.getScrollHelper();
-        if(axes == ViewCompat.SCROLL_AXIS_VERTICAL&&helper.startNestedScroll()){
-            if(!helper.isPrepared()) {
-                helper.init(child,target);
-                helper.setPrepared(true);
-                return false;
-            }else{
-                helper.setPrepared(false);
-                return true;
-            }
+        if(axes == ViewCompat.SCROLL_AXIS_VERTICAL&&type==ViewCompat.TYPE_TOUCH&&helper.startNestedScroll()){
+            helper.init(child,target);
+//            if(!helper.isPrepared()) {
+//                helper.init(child,target);
+//                helper.setPrepared(true);
+//                return false;
+//            }else{
+//                helper.setPrepared(false);
+//                return true;
+//            }
+            return true;
         }else return false;
     }
 
@@ -57,6 +69,7 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
 
     @Override
     public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, int type) {
+//        Log.i("ssssssssssssssss","onStopNestedScroll");
         helper.translateY(false);
 //        super.onStopNestedScroll(coordinatorLayout, child, target, type);
     }

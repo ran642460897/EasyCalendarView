@@ -19,11 +19,12 @@ public class ScrollHelper {
     private NestedScrollView targetView;
     private float finalCalendarDownY,finalTargetDownY,finalCalendarUpY,finalTargetUpY;
 //    private int initTargetHeight=0,initCalendarHeight=0;
-    private boolean prepared=false;
+    private boolean block=false;
     private boolean scrollable=true;
     private int firstScrollType=SCROLL_TYPE_NONE;
 
     public void init(EasyCalendarView child, View target){
+        if(block) return;
 //        Log.i("ssssssssssss","init");
         if (calendarView == null) calendarView = child;
         if (targetView == null && target instanceof NestedScrollView)
@@ -41,6 +42,27 @@ public class ScrollHelper {
         finalTargetUpY = (child.getInitY() + child.getItemHeight());//上滑target最终位置
 //            initCalendarHeight = (int) calendarView.getY();//calendar初始位置
 //            initTargetHeight = (int) targetView.getY();//child初始位置
+//        Log.i("sssssssssssssssss","finalCalendarDownY:"+finalCalendarDownY);
+//        Log.i("sssssssssssssssss","finalTargetDownY:"+finalTargetDownY);
+//        Log.i("sssssssssssssssss","finalCalendarUpY:"+finalCalendarUpY);
+//        Log.i("sssssssssssssssss","finalTargetUpY:"+finalTargetUpY);
+        blockTime();
+    }
+    private void blockTime(){
+        block=true;
+         Thread thread=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    block=false;
+                }
+            });
+        thread.start();
+
     }
     public boolean scroll(float dy){
         boolean consumed=false;
@@ -84,32 +106,41 @@ public class ScrollHelper {
     }
 
     public void translateY(boolean forceToBottom){
+        if(block) return;
+        scrollable=false;//不可滑动
         if(forceToBottom){
-            scrollable=false;
             translateToBottom();
         }
         else if (targetView.getScrollY()==0) {
-            scrollable=false;//不可滑动
             float calendarDistance,targetDistance;
-            switch (firstScrollType){
-                case SCROLL_TYPE_TO_TOP:
-                    calendarDistance=finalCalendarDownY-calendarView.getY();
-                    targetDistance=finalTargetDownY-(int)targetView.getY();
-                    if(calendarDistance+targetDistance>calendarView.getItemHeight()) translateToTop();
-                    else translateToBottom();
-                    break;
-                case SCROLL_TYPE_TO_BOTTOM:
-                    calendarDistance=(int) calendarView.getY()-finalCalendarUpY;
-                    targetDistance=(int)targetView.getY()-finalTargetUpY;
-                    if(calendarDistance+targetDistance>calendarView.getItemHeight()) translateToBottom();
-                    else translateToTop();
-                    break;
+            if(calendarView.getY()==finalCalendarDownY&&targetView.getY()==finalTargetDownY){//判断是否已结束
+                endTranslate(SCROLL_TYPE_TO_BOTTOM);
+            }else if(calendarView.getY()==finalCalendarUpY&&targetView.getY()==finalTargetUpY){
+                endTranslate(SCROLL_TYPE_TO_TOP);
+            }else {
+                switch (firstScrollType) {
+                    case SCROLL_TYPE_TO_TOP:
+                        calendarDistance = finalCalendarDownY - calendarView.getY();
+                        targetDistance = finalTargetDownY - (int) targetView.getY();
+                        if (calendarDistance + targetDistance > calendarView.getItemHeight())
+                            translateToTop();
+                        else translateToBottom();
+                        break;
+                    case SCROLL_TYPE_TO_BOTTOM:
+                        calendarDistance = (int) calendarView.getY() - finalCalendarUpY;
+                        targetDistance = (int) targetView.getY() - finalTargetUpY;
+                        if (calendarDistance + targetDistance > calendarView.getItemHeight())
+                            translateToBottom();
+                        else translateToTop();
+                        break;
+                }
             }
         }else {
             translateToTop();
         }
     }
     private void translateToTop(){
+//        Log.i("ssssssssssssssssss","to top");
         if(calendarView.getY()>finalCalendarUpY){
             translateCalendar(finalCalendarUpY-calendarView.getY(),true);
         }else{
@@ -117,6 +148,7 @@ public class ScrollHelper {
         }
     }
     private void translateToBottom(){
+//        Log.i("ssssssssssssssssss","to bottom");
         float targetOffsetY=targetView.getY()-calendarView.getY()-calendarView.getUpperHeight()-calendarView.getItemHeight();
         float targetAllOffsetY=calendarView.getUnderHeight();
         if(targetOffsetY<targetAllOffsetY){
@@ -165,6 +197,7 @@ public class ScrollHelper {
         return targetView.getScrollY()==0&&(firstScrollType==SCROLL_TYPE_TO_TOP||firstScrollType==SCROLL_TYPE_TO_BOTTOM);
     }
     public boolean startNestedScroll(){
+//        Log.i("sssssssssssssss","scrollable:"+scrollable);
         return targetView==null||targetView.getScrollY()==0&&scrollable;
     }
 
@@ -177,13 +210,6 @@ public class ScrollHelper {
         this.scrollable = scrollable;
     }
 
-    public boolean isPrepared() {
-        return prepared;
-    }
 
-
-    public void setPrepared(boolean prepared) {
-        this.prepared = prepared;
-    }
 
 }
