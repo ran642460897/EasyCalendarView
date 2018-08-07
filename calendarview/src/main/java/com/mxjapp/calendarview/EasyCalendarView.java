@@ -1,10 +1,14 @@
 package com.mxjapp.calendarview;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,15 +149,15 @@ public class EasyCalendarView extends ViewPager{
 
             }
         });
-        getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
-            @Override
-            public void onDraw() {
-                frozen=false;
-            }
-        });
         setCurrentItem(1000,false);
         curPosition=getCurrentItem();
 
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        frozen=false;
     }
     private void calculateLine(){
         currentLine=calendarPages.get(curPosition%3).getLine();
@@ -184,6 +188,7 @@ public class EasyCalendarView extends ViewPager{
         calendarPages.get((curPosition+1)%3).switchToWeek(calendar);
     }
     public void switchCurrentPageToMonth(){
+//        Log.i("sssssssssssss","switch");
         frozen=true;
         setTranslationY(initY-upperHeight);
         CalendarPage page=calendarPages.get(curPosition%3);
