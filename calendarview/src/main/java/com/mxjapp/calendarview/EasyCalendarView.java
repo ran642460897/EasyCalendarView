@@ -95,7 +95,8 @@ public class EasyCalendarView extends ViewPager{
                     scrollableX=false;
                     scrollHelper.scroll(y);
                 }else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH){
-                    scrollHelper.init(EasyCalendarView.this,otherView);
+//                    scrollableX=false;
+//                    scrollHelper.init(EasyCalendarView.this,otherView);
                 }
             }
 
@@ -104,7 +105,7 @@ public class EasyCalendarView extends ViewPager{
                 if(act==CalendarPage.ACT_SCROLL_MONTH_TO_WEEK)
                     scrollHelper.translateY(false);
                 else if(act==CalendarPage.ACT_SCROLL_WEEK_TO_MONTH){
-                    scrollHelper.translateY(true);
+//                    scrollHelper.translateY(true);
                 }
             }
         };

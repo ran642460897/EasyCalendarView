@@ -37,18 +37,10 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View directTargetTarget, @NonNull View target, int axes, int type) {
-//        Log.i("sssssssssssssss","onStartNestedScroll");
+        Log.i("sssssssssssssss","onStartNestedScroll");
         if(helper==null) helper=child.getScrollHelper();
         if(axes == ViewCompat.SCROLL_AXIS_VERTICAL&&type==ViewCompat.TYPE_TOUCH&&helper.startNestedScroll()){
             helper.init(child,target);
-//            if(!helper.isPrepared()) {
-//                helper.init(child,target);
-//                helper.setPrepared(true);
-//                return false;
-//            }else{
-//                helper.setPrepared(false);
-//                return true;
-//            }
             return true;
         }else return false;
     }
