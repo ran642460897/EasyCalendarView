@@ -63,7 +63,7 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
 
     @Override
     public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, int type) {
-        Log.i("ssssssssssssssss","onStopNestedScroll");
+//        Log.i("ssssssssssssssss","onStopNestedScroll");
         helper.translateY(false);
 //        super.onStopNestedScroll(coordinatorLayout, child, target, type);
     }
@@ -71,7 +71,7 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
     @Override
     public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, float velocityX, float velocityY) {
 //        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-        Log.i("sssssssssssssss","onNestedPreFling");
+//        Log.i("sssssssssssssss","onNestedPreFling");
         boolean interceptFling=target.getScrollY()==0;
         if(!interceptFling) {
             helper.setScrollable(false);

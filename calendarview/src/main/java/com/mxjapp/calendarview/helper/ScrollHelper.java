@@ -106,7 +106,7 @@ public class ScrollHelper {
     }
 
     public void translateY(boolean forceToBottom){
-        Log.i("ssssssssssssssssss","block:"+block);
+//        Log.i("ssssssssssssssssss","block:"+block);
         if(block) return;
         scrollable=false;//不可滑动
         if(forceToBottom){
@@ -115,10 +115,10 @@ public class ScrollHelper {
         else if (targetView.getScrollY()==0) {
             float calendarDistance,targetDistance;
             if(calendarView.getY()==finalCalendarDownY&&targetView.getY()==finalTargetDownY){//判断是否已结束
-                Log.i("ssssssssssssssss","end");
+//                Log.i("ssssssssssssssss","end");
                 endTranslate(SCROLL_TYPE_TO_BOTTOM);
             }else if(calendarView.getY()==finalCalendarUpY&&targetView.getY()==finalTargetUpY){
-                Log.i("ssssssssssssssss","end");
+//                Log.i("ssssssssssssssss","end");
                 endTranslate(SCROLL_TYPE_TO_TOP);
             }else {
                 switch (firstScrollType) {
@@ -146,7 +146,7 @@ public class ScrollHelper {
         }
     }
     private void translateToTop(){
-        Log.i("ssssssssssssssssss","to top");
+//        Log.i("ssssssssssssssssss","to top");
         if(calendarView.getY()>finalCalendarUpY){
             translateCalendar(finalCalendarUpY-calendarView.getY(),true);
         }else{
@@ -154,7 +154,7 @@ public class ScrollHelper {
         }
     }
     private void translateToBottom(){
-        Log.i("ssssssssssssssssss","to bottom");
+//        Log.i("ssssssssssssssssss","to bottom");
         float targetOffsetY=targetView.getY()-calendarView.getY()-calendarView.getUpperHeight()-calendarView.getItemHeight();
         float targetAllOffsetY=calendarView.getUnderHeight();
         if(targetOffsetY<targetAllOffsetY){
