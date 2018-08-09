@@ -31,16 +31,18 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
 
     @Override
     public boolean onInterceptTouchEvent(CoordinatorLayout parent, EasyCalendarView child, MotionEvent ev) {
-//        return helper!=null&&!helper.isScrollable();
-        return false;
+        return helper!=null&&!helper.isScrollable();
+//        return false;
     }
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View directTargetTarget, @NonNull View target, int axes, int type) {
-        Log.i("sssssssssssssss","onStartNestedScroll");
+        boolean touch=type==ViewCompat.TYPE_TOUCH;
         if(helper==null) helper=child.getScrollHelper();
+//        Log.i("sssssssssssssss","onStartNestedScroll "+touch+" scrollable:"+helper.isScrollable());
         if(axes == ViewCompat.SCROLL_AXIS_VERTICAL&&type==ViewCompat.TYPE_TOUCH&&helper.startNestedScroll()){
             helper.init(child,target);
+            child.setScrollableX(false);
             return true;
         }else return false;
     }
@@ -61,7 +63,7 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
 
     @Override
     public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, int type) {
-//        Log.i("ssssssssssssssss","onStopNestedScroll");
+        Log.i("ssssssssssssssss","onStopNestedScroll");
         helper.translateY(false);
 //        super.onStopNestedScroll(coordinatorLayout, child, target, type);
     }
@@ -69,9 +71,14 @@ public class CalendarViewBehaviorWithScrollView extends CoordinatorLayout.Behavi
     @Override
     public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull EasyCalendarView child, @NonNull View target, float velocityX, float velocityY) {
 //        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
+        Log.i("sssssssssssssss","onNestedPreFling");
         boolean interceptFling=target.getScrollY()==0;
-        if(!interceptFling) helper.setScrollable(false);
+        if(!interceptFling) {
+            helper.setScrollable(false);
+            helper.setBlock(false);
+        }
         return interceptFling;
+//        return true;
     }
 
     @Override

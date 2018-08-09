@@ -322,8 +322,13 @@ public class EasyCalendarView extends ViewPager{
         this.scrollableX = scrollableX;
     }
 
+
     public boolean isFrozen() {
         return frozen;
+    }
+
+    public void setScrollableY(boolean scrollableY) {
+        this.scrollableY = scrollableY;
     }
 
     public void setOnDateChangedListener(OnDateChangedListener onDateChangedListener) {
